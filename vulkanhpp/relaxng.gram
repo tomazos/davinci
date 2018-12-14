@@ -1,0 +1,18 @@
+comment:
+   # ... \n
+
+namespace_decl:
+    namespace ID = STRING
+
+production:
+    ID = expr
+    
+expr:
+    element ID { expr }
+    attribute ID { expr }
+    ID
+    expr ?
+    expr *
+    expr | expr
+    ( expr )
+    expr , expr

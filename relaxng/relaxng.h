@@ -42,15 +42,15 @@ struct ClassReflection;
 template<class Class, size_t member_index>
 struct ClassMemberReflection;
 
-void set_member(std::optional<std::string>& t, std::string_view value) {
+inline void set_member(std::optional<std::string>& t, std::string_view value) {
   t = value;
 }
 
-void set_member(std::string& t, std::string_view value) {
+inline void set_member(std::string& t, std::string_view value) {
   t = value;
 }
 
-void set_member(std::vector<std::string>& t, std::string_view value) {
+inline void set_member(std::vector<std::string>& t, std::string_view value) {
   t.push_back(std::string(value));
 }
 

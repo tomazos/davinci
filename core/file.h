@@ -76,7 +76,7 @@ class file_writer {
   std::ofstream ofs;
 };
 
-std::string load_file(const fspath& filename) {
+inline std::string load_file(const fspath& filename) {
   file_reader reader(filename);
   std::string s;
   s.resize(reader.size());
@@ -84,7 +84,7 @@ std::string load_file(const fspath& filename) {
   return s;
 }
 
-void touch_file(const dvc::fspath& fspath) {
+inline void touch_file(const dvc::fspath& fspath) {
   file_writer writer(fspath, append);
 }
 

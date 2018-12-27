@@ -9,47 +9,9 @@ cc_library(
 )
 
 cc_binary(
-  name = "vulkan_hpp_generator",
+  name = "vkxmlc",
   srcs = [
-      "VulkanHppGenerator.cpp",
-  ],
-  linkopts = [
-      "-ltinyxml2",
-  ],
-)
-
-cc_binary(
-  name = "vkxmlparser",
-  srcs = [
-      "vkxmlparser.cc",
-  ],
-  data = [
-      "vk.xml",
-      "vk82.xml",
-  ],
-  linkopts = [
-        "-ltinyxml2",
-  ],
-)
-
-#cc_binary(
-#  name = "vkxmlparser2",
-#  srcs = [
-#      "vkxmlparser2.cc",
-#  ],
-#  linkopts = [
-#      "-ltinyxml2",
-#  ],
-#)
-
-cc_binary(
-  name = "vkxmlparser3",
-  srcs = [
-      "vkxmlparser3.cc",
-  ],
-    data = [
-      "vk.xml",
-      "vk82.xml",
+      "vkxmlc.cc",
   ],
   linkopts = [
       "-ltinyxml2",
@@ -58,25 +20,17 @@ cc_binary(
       "-lstdc++fs",
   ],
   deps = [
+      ":spock_api_schema",
+      ":spock_api_schema_builder",
       ":vulkan_relaxng",
+      ":vulkan_api_schema",
+      ":vulkan_api_schema_parser",
       "//core:json",
       "//core:file",
+      "//core:container",
+      "//core:string",
   ],
 )
-
-cc_binary(
-  name = "dlvk",
-  srcs = [
-    "dlvk.cc",
-  ],
-  linkopts = [
-    "-ldl",
-  ],
-  deps = [
-    ":libvulkan",
-  ],
-)
-
 
 genrule(
   name = "vulkan_relaxng_generate",
@@ -102,6 +56,13 @@ cc_library(
   ],
 )
 
+cc_library(
+   name = "vulkan_api_schema",
+   hdrs = [
+     "vulkan_api_schema.h",
+   ],
+)
+
 cc_test(
   name = "vulkan_relaxng_test",
   srcs = [
@@ -109,5 +70,114 @@ cc_test(
   ],
   deps = [
      ":vulkan_relaxng",
+  ],
+)
+
+genrule(
+  name = "vkxmltest_generate",
+  srcs = [
+	"vk82.xml",
+  ],
+  outs = [
+     "vkxmltest.cc",
+     "vkxml.json",
+     "spock.h",
+  ],
+  cmd = "$(location :vkxmlc) " +
+        "--vkxml $(location vk82.xml) " +
+        "--outjson $(location vkxml.json) " +
+        "--outtest $(location vkxmltest.cc) " +
+        "--outh $(location spock.h)",
+  tools = [
+     ":vkxmlc",
+  ],
+)
+
+cc_library(
+  name = "vkxmltest_header",
+  hdrs = [
+    "vkxmltest.h",
+  ],
+)
+
+cc_test(
+  name = "vkxmltest",
+  srcs = [
+    "vkxmltest.cc",
+  ],
+  deps = [
+    ":vkxmltest_header",
+  ],
+)
+
+cc_library(
+  name = "minic_parser",
+  hdrs = [
+    "minic_parser.h",
+  ],
+  srcs = [
+    "minic_parser.cc",
+  ],
+  deps = [
+    "//core:parser",
+    "//core:scanner",
+  ],
+)
+
+cc_library(
+  name = "vulkan_api_schema_parser",
+  hdrs = [
+    "vulkan_api_schema_parser.h",
+  ],
+  srcs = [
+    "vulkan_api_schema_parser.cc",
+  ],
+  deps = [
+    ":vulkan_relaxng",
+    ":vulkan_api_schema",
+    ":minic_parser",
+    "//core:container",
+    "//core:string",
+  ],
+)
+
+cc_library(
+  name = "spock",
+  hdrs = [
+    "spock.h",
+  ],
+)
+
+cc_test(
+  name = "spocktest",
+  srcs = [
+    "spocktest.cc",
+  ],
+  deps = [
+    ":spock",
+  ],
+)
+
+cc_library(
+  name = "spock_api_schema",
+  hdrs = [
+    "spock_api_schema.h",
+  ],
+  deps = [
+     ":vulkan_api_schema",
+  ],
+)
+
+cc_library(
+  name = "spock_api_schema_builder",
+  hdrs = [
+    "spock_api_schema_builder.h",
+  ],
+  srcs = [
+    "spock_api_schema_builder.cc",
+  ],
+  deps = [
+     ":spock_api_schema",
+     "//core:container",
   ],
 )

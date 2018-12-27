@@ -37,6 +37,8 @@ class scanner {
     CHECK_LE(pos(), data.size()) << "unexpected end of file " << filename;
   }
 
+  const std::string& get_data() const { return data; }
+
  private:
   std::string filename;
   const std::string data;

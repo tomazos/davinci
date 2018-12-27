@@ -9,21 +9,35 @@ cc_library(
 
 cc_library(
     name = "scanner",
-    srcs = [
+    hdrs = [
         "scanner.h",
     ],
 )
 
 cc_library(
     name = "parser",
-    srcs = [
+    hdrs = [
         "parser.h",
     ],
 )
 
 cc_library(
     name = "json",
-    srcs = [
+    hdrs = [
         "json.h",
+    ],
+)
+
+cc_library(
+    name = "container",
+    hdrs = [
+        "container.h",
+    ],
+)
+
+cc_library(
+    name = "string",
+    hdrs = [
+        "string.h",
     ],
 )
